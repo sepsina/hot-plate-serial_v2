@@ -1,0 +1,38 @@
+<div id="app-frame">
+    <div id="thermostat">
+        <div id="set_run_flag">
+            <label for="ts_run_flag">run thermostat:</label>
+            <input type="checkbox" id="ts_run_flag" #tsRunFlag>
+        </div>
+        <div id="set_point">
+            <label for="sp_val">set point:</label>
+            <input type="number" id="sp_val" min="10" max="250" [(ngModel)]="tsSetPoint">
+        </div>
+        <div id="set_hist">
+            <label for="hist_val">hist:</label>
+            <input type="number" id="hist_val" min="1" max="5" [(ngModel)]="tsHist">
+        </div>
+        <div id="set_duty">
+            <label for="duty_val">duty:</label>
+            <input type="number" id="duty_val" min="0" max="100" [(ngModel)]="tsDuty">
+        </div>
+        <div id="set_thermostat">
+            <button type="button" (click)="this.setThermostat()">Send</button>
+        </div>
+    </div>
+    <div id="graph_cont">
+        <div id="tc">
+            {{tc}}
+        </div>
+        <canvas baseChart width="400" height="300"
+            [type]="'line'"
+            [data]="lineChartData"
+            [options]="lineChartOptions"
+            [legend]="lineChartLegend">
+        </canvas>
+    </div>
+    <div id="ts_status">
+        {{tsStatus}}
+        <button type="button" (click)="syncFlag = true" [disabled]="syncDis">Sync</button>
+    </div>
+</div>
