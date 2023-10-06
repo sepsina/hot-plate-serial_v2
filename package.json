@@ -5,10 +5,10 @@
   "node-remote": "http://localhost:8964",
   "chromium-args": "--disable-raf-throttling",
   "window": {
-    "width": 500,
-    "height": 780,
+    "width": 450,
+    "height": 640,
     "min_width": 400,
-    "min_height": 500,
+    "min_height": 600,
     "icon": "your-app-logo.png"
   },
   "scripts": {

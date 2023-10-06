@@ -24,26 +24,45 @@
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
-              "src/favicon.ico",
-              "src/assets"
+                {
+                    "glob": "**/*",
+                    "ignore": ["package.json"],
+                    "input": "src/assets/",
+                    "output": "/assets/"
+                },
+                {
+                    "glob": "favicon.ico",
+                    "input": "src/",
+                    "output": "/"
+                },
+                {
+                    "glob": "package.json",
+                    "input": "src/assets/",
+                    "output": "/"
+                }
             ],
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "stylePreprocessorOptions": {
+                "includePaths": [
+                    "./node_modules"
+                ]
+            }
           },
           "configurations": {
             "production": {
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumWarning": "2mb",
+                  "maximumError": "3mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "maximumWarning": "6kb",
+                  "maximumError": "8kb"
                 }
               ],
               "fileReplacements": [

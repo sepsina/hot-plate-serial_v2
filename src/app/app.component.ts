@@ -162,7 +162,12 @@ export class AppComponent implements OnInit, OnDestroy{
 
         this.ngZone.run(()=>{
             if(msg.runFlag){
-                this.tc = `tc: ${msg.tcTemp.toFixed(1)} degC`;
+                if(msg.tcTemp != null){
+                    this.tc = `tc: ${msg.tcTemp.toFixed(1)} degC`;
+                }
+                else {
+                    this.tc = `tc: --.- degC`;    
+                }
             }
             else {
                 this.tc = `tc: --.- degC`;
