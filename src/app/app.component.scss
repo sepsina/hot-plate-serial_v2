@@ -20,16 +20,13 @@
     border-radius: 6px;
     padding: 10px;
 }
-#set_run_flag {
+#run_flag {
     flex: 1 1 100%;
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
     align-items: center;
     padding: 3px;
-    //padding-right: 6px;
-    //border: 1px solid lightgrey;
-
     gap: 5px;
 }
 #set_point {
@@ -39,12 +36,11 @@
     justify-content: flex-end;
     align-items: center;
     padding: 3px;
-    //padding-right: 6px;
-    //border: 1px solid lightgrey;
     gap: 5px;
 }
 #sp_val {
     text-align: right;
+    min-width: 40px;
     padding-right: 4px;
 }
 #set_hist {
@@ -54,12 +50,11 @@
     justify-content: flex-end;
     align-items: center;
     padding: 3px;
-    //padding-right: 6px;
-    //border: 1px solid lightgrey;
     gap: 5px;
 }
 #hist_val {
     text-align: right;
+    min-width: 40px;
     padding-right: 4px;
 }
 #set_duty {
@@ -69,12 +64,11 @@
     justify-content: flex-end;
     align-items: center;
     padding: 3px;
-    //padding-right: 6px;
-    //border: 1px solid lightgrey;
     gap: 5px;
 }
 #duty_val {
     text-align: right;
+    min-width: 40px;
     padding-right: 4px;
 }
 #set_thermostat {
@@ -85,8 +79,6 @@
     align-items: center;
     padding: 3px;
     padding-top: 10px;
-    //padding-right: 6px;
-    //border: 1px solid lightgrey;
     border-top: 1px solid lightgrey;
     gap: 5px;
 }
@@ -106,8 +98,6 @@
     justify-content: flex-start;
     align-items: stretch;
     padding: 10px;
-    //padding-right: 6px;
-    //border: 1px solid lightgrey;
     border: 1px solid lightgrey;
     border-radius: 6px;
     gap: 10px;

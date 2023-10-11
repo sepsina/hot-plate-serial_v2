@@ -13,3 +13,5 @@ export const SL_MSG_LOG = 0x8001;
 export const SL_MSG_TEST_PORT = 0x0A01;
 export const SL_MSG_SET_T_STAT = 0x0A02;
 export const SL_MSG_GET_T_STAT = 0x0A03;
+export const SL_MSG_SET_SSR = 0x0A04;
+export const SL_MSG_SEND_TEMP = 0x0A05;

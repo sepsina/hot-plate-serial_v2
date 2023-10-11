@@ -23,6 +23,14 @@ export interface tsSet_t {
     duty: number;
 }
 
+export interface setSSR_t {
+    duty: number;
+}
+
+export interface tempRsp_t {
+    tcTemp: number;
+}
+
 export interface sl_msg_t {
     type: number;
     nodeBuf: any;

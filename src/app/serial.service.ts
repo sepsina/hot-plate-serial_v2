@@ -223,6 +223,7 @@ export class SerialService {
                 }
                 break;
             }
+            /*
             case gConst.SL_MSG_GET_T_STAT: {
                 const tsSet = {} as gIF.tsSet_t;
                 tsSet.runFlag = this.rwBuf.read_uint8();
@@ -232,6 +233,14 @@ export class SerialService {
                 tsSet.duty = this.rwBuf.read_uint8();
 
                 this.events.publish('newTS', tsSet);
+                break;
+            }
+            */
+            case gConst.SL_MSG_SEND_TEMP: {
+                const tempRsp = {} as gIF.tempRsp_t;
+                tempRsp.tcTemp = this.rwBuf.read_uint16_LE();
+
+                this.events.publish('newTemp', tempRsp);
                 break;
             }
             case gConst.SL_MSG_LOG: {
@@ -368,7 +377,7 @@ export class SerialService {
      *
      * brief
      *
-     */
+     *
     async getThermostat() {
 
         this.rwBuf.wrIdx = 0;
@@ -390,13 +399,13 @@ export class SerialService {
 
         await this.serialSend(msgLen);
     }
-
+    */
     /*******************************************************************************************
      * fn          setThermostat
      *
      * brief
      *
-     */
+     *
     async setThermostat(tsSet: gIF.tsSet_t) {
 
         this.rwBuf.wrIdx = 0;
@@ -409,6 +418,34 @@ export class SerialService {
         this.rwBuf.write_uint16_LE(tsSet.setPoint);
         this.rwBuf.write_uint8(tsSet.hist);
         this.rwBuf.write_uint8(tsSet.duty);
+
+        const msgLen = this.rwBuf.wrIdx;
+        let dataLen = msgLen - gConst.HEAD_LEN;
+        this.rwBuf.modify_uint16_LE(dataLen, gConst.LEN_IDX);
+        let crc = 0;
+        for(let i = 0; i < msgLen; i++) {
+            crc ^= this.txNodeBuf[i];
+        }
+        this.rwBuf.modify_uint8(crc, gConst.CRC_IDX);
+
+        await this.serialSend(msgLen);
+    }
+    */
+    /*******************************************************************************************
+     * fn          setSSR
+     *
+     * brief
+     *
+     */
+    async setSSR(setSSR: gIF.setSSR_t) {
+
+        this.rwBuf.wrIdx = 0;
+
+        this.rwBuf.write_uint16_LE(gConst.SL_MSG_SET_SSR);
+        this.rwBuf.write_uint16_LE(0); // len
+        this.rwBuf.write_uint8(0);     // CRC
+        // cmd data
+        this.rwBuf.write_uint8(setSSR.duty);
 
         const msgLen = this.rwBuf.wrIdx;
         let dataLen = msgLen - gConst.HEAD_LEN;

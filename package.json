@@ -5,10 +5,10 @@
   "node-remote": "http://localhost:8964",
   "chromium-args": "--disable-raf-throttling",
   "window": {
-    "width": 450,
-    "height": 640,
+    "width": 500,
+    "height": 600,
     "min_width": 400,
-    "min_height": 600,
+    "min_height": 500,
     "icon": "your-app-logo.png"
   },
   "scripts": {
@@ -30,6 +30,7 @@
     "@angular/router": "^14.2.0",
     "@types/chrome": "^0.0.246",
     "@types/dom-serial": "^1.0.3",
+    "@types/regression": "^2.0.3",
     "chart.js": "^4.0.1",
     "chrome-apps-serialport": "^1.0.9",
     "concurrently": "^7.6.0",

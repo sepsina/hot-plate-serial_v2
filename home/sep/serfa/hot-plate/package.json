@@ -1,0 +1,12 @@
+{
+  "name": "bridge",
+  "main": "index.html",
+  "chromium-args": "--disable-raf-throttling",
+  "window": {
+    "width": 450,
+    "height": 640,
+    "min_width": 400,
+    "min_height": 600,
+    "icon": "your-app-logo.png"
+  }
+}
