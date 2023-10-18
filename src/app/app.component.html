@@ -14,6 +14,7 @@
                    id="sp_val"
                    min="10"
                    max="250"
+                   selOnFocus
                    [ngModel]="setPoint"
                    (change)="spChanged($event)">
         </div>
@@ -23,6 +24,7 @@
                    id="hist_val"
                    min="0"
                    max="5"
+                   selOnFocus
                    [ngModel]="hist"
                    (change)="histChanged($event)">
         </div>
@@ -32,6 +34,7 @@
                    id="duty_val"
                    min="0"
                    max="100"
+                   selOnFocus
                    [ngModel]="ssrDuty"
                    (change)="dutyChanged($event)">
         </div>

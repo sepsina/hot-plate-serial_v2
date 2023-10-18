@@ -3,10 +3,10 @@
   "main": "index.html",
   "chromium-args": "--disable-raf-throttling",
   "window": {
-    "width": 450,
-    "height": 640,
+    "width": 500,
+    "height": 600,
     "min_width": 400,
-    "min_height": 600,
+    "min_height": 500,
     "icon": "your-app-logo.png"
   }
 }
