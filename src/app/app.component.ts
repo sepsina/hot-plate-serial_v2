@@ -7,15 +7,16 @@ import * as gConst from './gConst';
 import * as gIF from './gIF';
 import * as regression from 'regression'
 //import * as LPF from 'lpf';
+import * as tc from 'thermocouple-converter';
 
 const INVALID_TEMP = -1000;
 const BAD_CNT = 5;
 const CHART_LEN = 31;
-const LIN_CNT = 12;
+const LIN_CNT = 8;
 
-const TC_IDX = 2;
+const T_IDX = 0;
 const SP_IDX = 1;
-const REG_IDX = 0;
+const REG_IDX = 2;
 
 const SP_MAX = 250;
 const DUTY_MAX = 40;
@@ -41,8 +42,8 @@ export class AppComponent implements OnInit, OnDestroy{
             }
         }
     }
-    tc = '--.- degC';
-    tcTemp: number;
+    t_rtd = '--.- degC';
+    rtdTemp: number;
 
     tsRunFlag = 0;
     tsSetPoint = 20;
@@ -70,8 +71,8 @@ export class AppComponent implements OnInit, OnDestroy{
     hist = 0.5;
     ssrTMO: any;
 
-    regPoint = [];
-    regData = [];
+    lrPoint = [];
+    lrData = [];
 
     constructor(public serial: SerialService,
                 public events: EventsService,
@@ -96,11 +97,12 @@ export class AppComponent implements OnInit, OnDestroy{
         };
 
         this.lineChartData.labels = [];
-        this.lineChartData.datasets[TC_IDX] = {
+        this.lineChartData.datasets[T_IDX] = {
             data: [],
             label: 'temp',
             fill: false,
-            borderColor: 'lightgray',
+            borderColor: 'red',
+            borderWidth: 2,
             cubicInterpolationMode: 'monotone'
         };
         this.lineChartData.datasets[SP_IDX] = {
@@ -112,6 +114,7 @@ export class AppComponent implements OnInit, OnDestroy{
             borderWidth: 2,
             cubicInterpolationMode: 'monotone'
         };
+        /*
         this.lineChartData.datasets[REG_IDX] = {
             data: [],
             label: 'lin reg',
@@ -121,19 +124,20 @@ export class AppComponent implements OnInit, OnDestroy{
             borderWidth: 2,
             cubicInterpolationMode: 'monotone'
         };
+        */
         for(let i = 0; i < CHART_LEN; i++){
             this.lineChartData.labels[i] = '';
-            this.lineChartData.datasets[TC_IDX].data[i] = null;
+            this.lineChartData.datasets[T_IDX].data[i] = null;
             this.lineChartData.datasets[SP_IDX].data[i] = null;
-            this.lineChartData.datasets[REG_IDX].data[i] = null;
+            //this.lineChartData.datasets[REG_IDX].data[i] = null;
             this.chartTime.push(0);
             this.secTime.push(0);
         }
         for(let i = 0; i < LIN_CNT; i++){
-            this.regPoint = [];
-            this.regPoint.push(i);
-            this.regPoint.push(0);
-            this.regData.push(this.regPoint);
+            this.lrPoint = [];
+            this.lrPoint.push(i);
+            this.lrPoint.push(0);
+            this.lrData.push(this.lrPoint);
         }
 
         this.prevSP = this.setPoint;
@@ -219,30 +223,31 @@ export class AppComponent implements OnInit, OnDestroy{
     newTemp(msg: gIF.tempRsp_t){
 
         clearTimeout(this.ssrTMO);
-
         const setSSR = {} as gIF.setSSR_t;
         setSSR.duty = 0;
+        
+        const pga = 8;
+        const r_ref = 1661;
+        let rtd_ohm = (msg.rtd_adc / pga) * r_ref / 2**23;
+        const A = 3.9083e-3;
+        const B = -5.775e-7;
+        const R0 = 100;
+        this.rtdTemp = (-A + (A**2 - 4 * B * (1 - rtd_ohm / R0))**0.5) / (2 * B);
 
-        if(msg.tcTemp & (1 << 2)){
-            this.tcTemp = 1000.0;
-        }
-        else {
-            this.tcTemp = (msg.tcTemp >> 3) / 4.0;
-        }
         this.updateGraph();
-        if(this.tcTemp){
+        if(this.rtdTemp){
             if(this.runFlag){
-                if(this.tcTemp > this.workPoint){
+                if(this.rtdTemp > this.workPoint){
                     if(this.workPoint > this.setPoint){
                         this.workPoint = this.setPoint - this.hist;
                     }
                 }
-                if(this.tcTemp < this.workPoint){
+                if(this.rtdTemp < this.workPoint){
                     if(this.workPoint < this.setPoint){
                         this.workPoint = this.setPoint + this.hist;
                     }
                 }
-                if(this.tcTemp < this.workPoint){
+                if(this.rtdTemp < this.workPoint){
                     if(this.ssrDuty < 100){
                         setSSR.duty = this.ssrDuty;
                     }
@@ -293,41 +298,42 @@ export class AppComponent implements OnInit, OnDestroy{
             this.lineChartData.labels[CHART_LEN - 1] = 0;
         }
 
-        this.lineChartData.datasets[TC_IDX].data.shift();
+        this.lineChartData.datasets[T_IDX].data.shift();
 
         if(this.lastValid === INVALID_TEMP){
-            this.lastValid = this.tcTemp;
+            this.lastValid = this.rtdTemp;
         }
         else {
-            if(Math.abs(this.tcTemp - this.lastValid) > 10){
+            if(Math.abs(this.rtdTemp - this.lastValid) > 10){
                 this.badCnt++;
                 if(this.badCnt > BAD_CNT){
-                    this.lastValid = this.tcTemp;
+                    this.lastValid = this.rtdTemp;
                     this.badCnt = 0;
                 }
                 else {
-                    this.tcTemp = null;
+                    this.rtdTemp = null;
                 }
             }
             else {
-                this.lastValid = this.tcTemp;
+                this.lastValid = this.rtdTemp;
                 this.badCnt = 0;
             }
         }
-        this.lineChartData.datasets[TC_IDX].data.push(this.tcTemp);
+        this.lineChartData.datasets[T_IDX].data.push(this.rtdTemp);
 
         this.lineChartData.datasets[SP_IDX].data.shift();
         this.lineChartData.datasets[SP_IDX].data.push(this.setPoint);
 
-        this.regData = [];
+        /*
+        this.lrData = [];
         for(let i = (CHART_LEN - LIN_CNT); i < CHART_LEN; i++){
-            const regPoint = [];
-            regPoint.push(this.secTime[i]);
-            regPoint.push(this.lineChartData.datasets[TC_IDX].data[i]);
-            this.regData.push(regPoint);
+            const lrPoint = [];
+            lrPoint.push(this.secTime[i]);
+            lrPoint.push(this.lineChartData.datasets[T_IDX].data[i]);
+            this.lrData.push(lrPoint);
         }
 
-        const reg = regression.linear(this.regData);
+        const reg = regression.linear(this.lrData);
 
         this.lineChartData.datasets[REG_IDX].data = [];
         for(let i = 0; i < CHART_LEN; i++){
@@ -336,19 +342,18 @@ export class AppComponent implements OnInit, OnDestroy{
         for(let i = (CHART_LEN - LIN_CNT); i < CHART_LEN; i++){
             this.lineChartData.datasets[REG_IDX].data[i] = reg.predict(this.secTime[i])[1];
         }
-
+        */
         this.chart.update();
-
-        //this.tcTemp = reg.predict(this.secTime[CHART_LEN - 1])[1];
-        this.tcTemp = Number(this.lineChartData.datasets[REG_IDX].data[CHART_LEN - 1]);
+        
+        //this.rtdTemp = Number(this.lineChartData.datasets[REG_IDX].data[CHART_LEN - 1]);
 
 
         this.ngZone.run(()=>{
-            if(this.tcTemp != null){
-                this.tc = `tc: ${this.tcTemp.toFixed(1)} degC`;
+            if(this.rtdTemp != null){
+                this.t_rtd = `t_rtd: ${this.rtdTemp.toFixed(1)} degC`;
             }
             else {
-                this.tc = `tc: --.- degC`;    
+                this.t_rtd = `t_rtd: --.- degC`;    
             }
         });
     }
@@ -361,7 +366,7 @@ export class AppComponent implements OnInit, OnDestroy{
      */
     lineChartData: ChartConfiguration<'line'>['data'] = {
         labels: [],
-        datasets: [null, null, null]
+        datasets: [null, null]
     };
 
     public lineChartOptions: ChartOptions<'line'> = {

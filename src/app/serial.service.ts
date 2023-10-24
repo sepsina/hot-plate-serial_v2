@@ -238,7 +238,11 @@ export class SerialService {
             */
             case gConst.SL_MSG_SEND_TEMP: {
                 const tempRsp = {} as gIF.tempRsp_t;
-                tempRsp.tcTemp = this.rwBuf.read_uint16_LE();
+                //tempRsp.is_cj_neg = this.rwBuf.read_uint8();
+                //tempRsp.cj_temp = this.rwBuf.read_uint32_LE();
+                //tempRsp.is_tc_neg = this.rwBuf.read_uint8();
+                //tempRsp.tc_temp = this.rwBuf.read_uint32_LE();
+                tempRsp.rtd_adc = this.rwBuf.read_uint32_LE();
 
                 this.events.publish('newTemp', tempRsp);
                 break;

@@ -28,7 +28,11 @@ export interface setSSR_t {
 }
 
 export interface tempRsp_t {
-    tcTemp: number;
+    //is_cj_neg: number;
+    //cj_temp: number;
+    //is_tc_neg: number;
+    //tc_temp: number;
+    rtd_adc: number;
 }
 
 export interface sl_msg_t {

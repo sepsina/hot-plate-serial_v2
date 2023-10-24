@@ -18,7 +18,8 @@
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "allowedCommonJsDependencies": [
-                "regression"
+                "regression",
+                "thermocouple-converter"
             ],
             "outputPath": "dist/hot-plate-serial",
             "index": "src/index.html",
