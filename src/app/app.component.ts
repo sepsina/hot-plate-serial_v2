@@ -38,21 +38,13 @@ export class AppComponent implements OnInit, OnDestroy{
                 console.log(`escape pressed`);
                 this.runFlag = false;
                 this.setPoint = 27;
+                this.ssrDuty = 0;
                 break;
             }
         }
     }
     t_rtd = '--.- degC';
     rtdTemp: number;
-
-    tsRunFlag = 0;
-    tsSetPoint = 20;
-    tsHist = 1;
-    tsDuty = 50;
-
-    tsStatus = '';
-    syncFlag = true;
-    syncDis = false;
 
     //chartLen = CHART_LEN;
     chartTime: number[] = [];
@@ -227,7 +219,7 @@ export class AppComponent implements OnInit, OnDestroy{
         setSSR.duty = 0;
         
         const pga = 8;
-        const r_ref = 1661;
+        const r_ref = 1643;
         let rtd_ohm = (msg.rtd_adc / pga) * r_ref / 2**23;
         const A = 3.9083e-3;
         const B = -5.775e-7;
